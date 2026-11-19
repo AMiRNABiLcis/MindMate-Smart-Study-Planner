@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Purple Colors from Figma -->
+    <color name="primary_purple">#7C3AED</color>
+    <color name="primary_purple_dark">#5B21B6</color>
+    <color name="primary_purple_light">#EDE9FE</color>
+    <color name="brand_title_purple">#7C3AED</color>
+
+    <!-- Backgrounds & Card Surfaces -->
+    <color name="screen_bg">#F0EEF9</color>
+    <color name="card_white">#FFFFFF</color>
+
+    <!-- Typography -->
+    <color name="text_primary">#1E1B4B</color>
+    <color name="text_secondary">#64748B</color>
+    <color name="text_hint">#94A3B8</color>
+    <color name="link_purple">#7C3AED</color>
+
+    <!-- Inputs & Feedback -->
+    <color name="input_stroke">#CBD5E1</color>
+    <color name="input_stroke_focused">#7C3AED</color>
+    <color name="error_red">#DC2626</color>
+
+    <!-- System & Existing Colors -->
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+
+    <!-- Tasks / Edit Subject -->
+    <color name="header_blue">#3B5B73</color>
+    <color name="field_bg">#EAEAF2</color>
+    <color name="chip_gray">#ECEBF5</color>
+    <color name="chip_orange">#FFE9D6</color>
+
+    <!-- Edit Subject -->
+    <color name="btn_blue">#558DE6</color>
+    <color name="field_light">#F1F0F5</color>
+</resources>
