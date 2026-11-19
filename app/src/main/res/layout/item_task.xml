@@ -2,6 +2,7 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="8dp"
@@ -20,9 +21,10 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_chip"
-            android:contentDescription="Task"
+            android:contentDescription="@string/cd_task"
             android:padding="10dp"
-            android:src="@drawable/tasks" />
+            android:src="@drawable/tasks"
+            app:tint="@color/primary_purple" />
 
         <LinearLayout
             android:layout_width="0dp"
@@ -35,10 +37,10 @@
                 android:id="@+id/tvTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Finish project report"
                 android:textColor="@color/text_primary"
                 android:textSize="14sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Finish project report" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -53,9 +55,9 @@
                     android:background="@drawable/bg_chip"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:text="High"
                     android:textColor="@color/text_primary"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="High" />
 
                 <TextView
                     android:id="@+id/tvStatus"
@@ -65,26 +67,26 @@
                     android:background="@drawable/bg_chip"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="2dp"
-                    android:text="Pending"
                     android:textColor="@color/text_primary"
-                    android:textSize="11sp" />
+                    android:textSize="11sp"
+                    tools:text="Pending" />
             </LinearLayout>
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnEdit"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@null"
-            android:contentDescription="Edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_edit"
             android:src="@drawable/ic_edit" />
 
         <ImageButton
             android:id="@+id/btnDelete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@null"
-            android:contentDescription="Delete"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cd_delete"
             android:src="@drawable/ic_delete" />
 
         <CheckBox
