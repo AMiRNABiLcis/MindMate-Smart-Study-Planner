@@ -1,5 +1,7 @@
 package com.example.mindmate
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -27,16 +29,32 @@ class TaskAdapter(
         b.tvTitle.text = task.title
         b.tvPriority.text = task.priority
         b.tvStatus.text = task.status
+        b.tvPriority.backgroundTintList = ColorStateList.valueOf(priorityColor(task.priority))
+        b.tvStatus.backgroundTintList = ColorStateList.valueOf(statusColor(task.status))
+
         b.tvTitle.paintFlags =
             if (task.isDone) b.tvTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             else b.tvTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 
+        // نشيل الليسينر قبل setChecked عشان الـ recycling
         b.cbDone.setOnCheckedChangeListener(null)
         b.cbDone.isChecked = task.isDone
         b.cbDone.setOnCheckedChangeListener { _, checked -> onToggle(task, checked) }
 
         b.btnEdit.setOnClickListener { onEdit(task) }
         b.btnDelete.setOnClickListener { onDelete(task) }
+    }
+
+    private fun priorityColor(p: String) = when (p) {
+        "High" -> Color.parseColor("#FFE3E3")
+        "Medium" -> Color.parseColor("#FFE9D6")
+        else -> Color.parseColor("#E2F6E7")
+    }
+
+    private fun statusColor(s: String) = when (s) {
+        "In Progress" -> Color.parseColor("#E1ECFF")
+        "Done" -> Color.parseColor("#E2F6E7")
+        else -> Color.parseColor("#ECEBF5")
     }
 
     private object Diff : DiffUtil.ItemCallback<Task>() {

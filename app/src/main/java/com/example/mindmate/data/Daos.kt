@@ -22,16 +22,13 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects WHERE id = :id")
     suspend fun getById(id: Long): Subject?
 
-    @Query("SELECT * FROM subjects ORDER BY id LIMIT 1")
-    suspend fun getFirst(): Subject?
+    @Query("SELECT * FROM subjects WHERE id = :id")
+    fun observeById(id: Long): Flow<Subject?>
 
-    @Query("SELECT * FROM subjects ORDER BY name")
-    fun observeAll(): Flow<List<Subject>>
-
-    /** للـ Home: كل مادة مع تاسكاتها (عشان تحسبوا التقدم) */
+    /** مواد اليوزر الحالي مع تاسكاتها (للـ Home و Subjects و Details) */
     @Transaction
-    @Query("SELECT * FROM subjects ORDER BY name")
-    fun observeSubjectsWithTasks(): Flow<List<SubjectWithTasks>>
+    @Query("SELECT * FROM subjects WHERE userId = :userId ORDER BY createdAt ASC")
+    fun observeSubjectsWithTasks(userId: String): Flow<List<SubjectWithTasks>>
 }
 
 @Dao
@@ -47,11 +44,4 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE subjectId = :subjectId ORDER BY createdAt DESC")
     fun observeBySubject(subjectId: Long): Flow<List<Task>>
-
-    @Query("SELECT COUNT(*) FROM tasks")
-    fun observeTotalCount(): Flow<Int>
-
-    @Query("SELECT COUNT(*) FROM tasks WHERE isDone = 1")
-    fun observeDoneCount(): Flow<Int>
 }
-
