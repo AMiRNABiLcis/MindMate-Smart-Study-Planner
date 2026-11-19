@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">MindMate</string>
+
+    <!-- Splash Screen -->
+    <string name="splash_title">MindMate</string>
+    <string name="splash_subtitle">your Smart Study Companion</string>
+    <string name="get_started">Get Started</string>
+
+    <!-- Create Account (Register) Screen -->
+    <string name="create_account_title">Create your account</string>
+    <string name="create_account_subtitle">Start your Ai learning journey</string>
+    <string name="label_full_name">Full Name:</string>
+    <string name="hint_full_name">Enter your full Name:</string>
+    <string name="label_email">Email Adress:</string>
+    <string name="hint_email">Enter your Email:</string>
+    <string name="label_password">Password:</string>
+    <string name="hint_password">Create a password:</string>
+    <string name="label_confirm_password">Confirm Password:</string>
+    <string name="hint_confirm_password">Confirm a password:</string>
+    <string name="terms_agreement">I agree to the Terms of Service and privacy policy</string>
+    <string name="create_account_btn">Create account</string>
+    <string name="already_have_account">Already have an account ? sign in here</string>
+
+    <!-- Login Screen -->
+    <string name="welcome_back">! Welcome Back</string>
+    <string name="login_subtitle">Log in to continue your learning journey</string>
+    <string name="label_email_login">Email Address:</string>
+    <string name="hint_email_login">Enter your email</string>
+    <string name="hint_password_login">Enter your password</string>
+    <string name="forget_password">Forget password?</string>
+    <string name="login_btn">Login</string>
+    <string name="dont_have_account">Don\'t have an account?Signup</string>
 </resources>
