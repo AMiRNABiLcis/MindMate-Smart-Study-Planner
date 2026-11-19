@@ -4,11 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Base64
 import java.security.MessageDigest
-
-/**
- * Manages user authentication state and session data locally using SharedPreferences.
- * Supports multiple registered user accounts keyed by email.
- */
 class UserSessionManager(context: Context) {
 
     private val prefs: SharedPreferences =

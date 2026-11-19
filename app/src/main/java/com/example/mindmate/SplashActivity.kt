@@ -25,7 +25,6 @@ class SplashActivity : AppCompatActivity() {
             return
         }
 
-        // Not logged in -> go to Login screen first
         binding.btnGetStarted.setOnClickListener {
             val intent = Intent(this@SplashActivity, LoginActivity::class.java)
             startActivity(intent)

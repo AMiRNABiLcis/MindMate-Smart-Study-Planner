@@ -13,20 +13,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import android.widget.Toast
 
 @Composable
 fun AddSubjectScreen(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
-    onAddTasksClick: () -> Unit = {},
+    onAddTasksClick: (String) -> Unit = {},
     onSaveSubject: (String) -> Unit = {}
 ) {
     var subjectName by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     Column(
         modifier = modifier
@@ -115,7 +118,15 @@ fun AddSubjectScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .clickable { onAddTasksClick() },
+                .clickable {
+                    // Saves the subject, then opens its Tasks tab so tasks can be added right away
+                    val trimmed = subjectName.trim()
+                    if (trimmed.isEmpty()) {
+                        Toast.makeText(context, "Enter a subject name first", Toast.LENGTH_SHORT).show()
+                    } else {
+                        onAddTasksClick(trimmed)
+                    }
+                },
             shape = RoundedCornerShape(14.dp),
             color = Color.White,
             border = BorderStroke(1.dp, Color(0xFF6BA4E7))
@@ -148,6 +159,8 @@ fun AddSubjectScreen(
                 val trimmed = subjectName.trim()
                 if (trimmed.isNotEmpty()) {
                     onSaveSubject(trimmed)
+                } else {
+                    Toast.makeText(context, "Subject name is required", Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier
