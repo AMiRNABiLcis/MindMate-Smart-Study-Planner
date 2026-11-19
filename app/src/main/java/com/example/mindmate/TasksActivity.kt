@@ -1,7 +1,7 @@
 package com.example.mindmate
 
 import android.os.Bundle
-import android.view.View
+import android.view.Gravity
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -36,7 +36,7 @@ class TasksActivity : AppCompatActivity() {
         binding.root.applySystemBarsPadding()
 
         subjectId = intent.getLongExtra("subject_id", -1L)
-        if (subjectId == -1L) {          // الشاشة لازم تتفتح من مادة
+        if (subjectId == -1L) {
             finish()
             return
         }
@@ -63,12 +63,9 @@ class TasksActivity : AppCompatActivity() {
 
         binding.btnBack.setOnClickListener { finish() }
         binding.btnAddTask.setOnClickListener { addTask() }
-        binding.tabOverview.setOnClickListener { finish() }   // Overview = شاشة تفاصيل المادة
-        binding.tabNotes.setOnClickListener {
-            Toast.makeText(this, "Notes: coming soon", Toast.LENGTH_SHORT).show()
-        }
+        binding.tabOverview.setOnClickListener { finish() }
+        binding.tabNotes.setOnClickListener { showNotesDialog() }
 
-        // الهيدر والليست بيتحدثوا مع أي تغيير (الهيدر = نسبة الإنجاز الحقيقية)
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 combine(
@@ -76,7 +73,7 @@ class TasksActivity : AppCompatActivity() {
                     db.taskDao().observeBySubject(subjectId)
                 ) { subject, tasks -> subject to tasks }
                     .collect { (subject, tasks) ->
-                        if (subject == null) {   // المادة اتمسحت
+                        if (subject == null) {
                             finish()
                             return@collect
                         }
@@ -122,7 +119,34 @@ class TasksActivity : AppCompatActivity() {
             .show()
     }
 
-    /** تعديل العنوان + الأولوية + الحالة */
+    /** Notes dialog: stores one note per subject in SharedPreferences */
+    private fun showNotesDialog() {
+        val prefs = getSharedPreferences("subject_notes", MODE_PRIVATE)
+        val key = "note_$subjectId"
+        val pad = (16 * resources.displayMetrics.density).toInt()
+
+        val input = EditText(this).apply {
+            setText(prefs.getString(key, ""))
+            hint = "Write your notes here..."
+            minLines = 5
+            gravity = Gravity.TOP or Gravity.START
+        }
+        val container = LinearLayout(this).apply {
+            setPadding(pad, pad / 2, pad, 0)
+            addView(input, LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle("Notes")
+            .setView(container)
+            .setPositiveButton("Save") { _, _ ->
+                prefs.edit().putString(key, input.text.toString()).apply()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    /** Edit title + priority + status */
     private fun showEditDialog(task: Task) {
         val pad = (16 * resources.displayMetrics.density).toInt()
         val input = EditText(this).apply { setText(task.title) }
