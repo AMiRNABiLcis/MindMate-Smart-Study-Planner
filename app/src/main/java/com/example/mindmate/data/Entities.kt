@@ -7,16 +7,14 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-/** جدول المواد */
 @Entity(tableName = "subjects")
 data class Subject(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
-    val studyGoal: Int,                       // نسبة الهدف 0..100
+    val studyGoal: Int,
     val createdAt: Long = System.currentTimeMillis()
 )
 
-/** جدول التاسكات: كل تاسك تابع لمادة (علاقة one-to-many) */
 @Entity(
     tableName = "tasks",
     foreignKeys = [
@@ -24,7 +22,7 @@ data class Subject(
             entity = Subject::class,
             parentColumns = ["id"],
             childColumns = ["subjectId"],
-            onDelete = ForeignKey.CASCADE      // لو اتمسحت المادة، تاسكاتها تتمسح
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [Index("subjectId")]
@@ -33,13 +31,12 @@ data class Task(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val subjectId: Long,
     val title: String,
-    val priority: String = "Medium",          // High / Medium / Low
-    val status: String = "Pending",           // Pending / In Progress / Done
+    val priority: String = "Medium",
+    val status: String = "Pending",
     val isDone: Boolean = false,
     val createdAt: Long = System.currentTimeMillis()
 )
 
-/** مادة + كل تاسكاتها في استعلام واحد */
 data class SubjectWithTasks(
     @Embedded val subject: Subject,
     @Relation(parentColumn = "id", entityColumn = "subjectId")

@@ -65,7 +65,6 @@ class TasksActivity : AppCompatActivity() {
         }
     }
 
-    /** لو الشاشة اتفتحت من غير مادة (تجربة)، نستخدم أول مادة أو نعمل واحدة تجريبية */
     private suspend fun resolveSubjectId(): Long {
         val passed = intent.getLongExtra("subject_id", -1L)
         if (passed != -1L) return passed

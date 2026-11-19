@@ -14,7 +14,7 @@ class EditSubjectActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEditSubjectBinding
     private val db by lazy { AppDatabase.get(this) }
 
-    private var current: Subject? = null   // null = مادة جديدة (للتجربة)
+    private var current: Subject? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

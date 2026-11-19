@@ -31,7 +31,6 @@ class TaskAdapter(
             if (task.isDone) b.tvTitle.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
             else b.tvTitle.paintFlags and Paint.STRIKE_THRU_TEXT_FLAG.inv()
 
-        // بغير ال ليسينر قبل التشيكد هنا عشان الري سايكلينج
         b.cbDone.setOnCheckedChangeListener(null)
         b.cbDone.isChecked = task.isDone
         b.cbDone.setOnCheckedChangeListener { _, checked -> onToggle(task, checked) }
