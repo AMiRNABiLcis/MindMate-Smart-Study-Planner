@@ -134,6 +134,7 @@ fun HomeContent(
     subjectsList: List<SubjectModel> = emptyList(),
     completedTasks: Int = 0,
     totalTasks: Int = 0,
+    userName: String = "",
     onAddSubjectClick: () -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSubjectClick: (SubjectModel) -> Unit = {},
@@ -161,7 +162,7 @@ fun HomeContent(
         ) {
             Column {
                 Text(
-                    text = "Hello, ",
+                    text = if (userName.isBlank()) "Hello \uD83D\uDC4B" else "Hello, $userName \uD83D\uDC4B",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0xFF1A1A1A)
@@ -171,6 +172,20 @@ fun HomeContent(
                     text = "Let's Make Today Count!",
                     fontSize = 14.sp,
                     color = Color(0xFF7A7A7A)
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .size(52.dp)
+                    .clip(androidx.compose.foundation.shape.CircleShape)
+                    .background(Color(0xFF284B6E)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = userName.trim().firstOrNull()?.uppercase() ?: "?",
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 22.sp
                 )
             }
         }
@@ -397,5 +412,6 @@ fun SubjectCard(
 
 data class SubjectModel(
     val name: String,
-    val percentage: String
+    val percentage: String,
+    val id: Long = -1L
 )

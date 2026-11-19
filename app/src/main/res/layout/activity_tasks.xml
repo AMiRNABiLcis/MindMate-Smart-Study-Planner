@@ -12,12 +12,13 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_margin="8dp"
-        android:background="@null"
-        android:contentDescription="Back"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cd_back"
         android:src="@drawable/arrow_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Text is set from code (subject name + progress %) -->
     <TextView
         android:id="@+id/tvSubjectHeader"
         android:layout_width="0dp"
@@ -26,12 +27,12 @@
         android:background="@drawable/bg_header"
         android:gravity="center"
         android:padding="10dp"
-        android:text="Programming   35%"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnBack" />
+        app:layout_constraintTop_toBottomOf="@id/btnBack"
+        tools:text="Programming   35%" />
 
     <LinearLayout
         android:id="@+id/tabs"
@@ -49,9 +50,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="8dp"
-            android:text="Overview"
+            android:text="@string/tab_overview"
             android:textColor="@color/primary_purple" />
 
         <TextView
@@ -59,9 +61,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="8dp"
-            android:text="Tasks"
+            android:text="@string/tab_tasks"
             android:textColor="@color/text_primary"
             android:textStyle="bold" />
 
@@ -70,9 +73,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
             android:gravity="center"
             android:padding="8dp"
-            android:text="Notes"
+            android:text="@string/tab_notes"
             android:textColor="@color/primary_purple" />
     </LinearLayout>
 
@@ -105,7 +109,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add a New Task"
+            android:text="@string/add_new_task"
             android:textColor="@color/primary_purple"
             android:textStyle="bold" />
 
@@ -116,7 +120,7 @@
             android:layout_marginTop="8dp"
             android:autofillHints="none"
             android:background="@drawable/bg_field"
-            android:hint="Enter task title..."
+            android:hint="@string/hint_task_title"
             android:inputType="text"
             android:paddingHorizontal="16dp"
             android:textColor="@color/text_primary"
@@ -153,7 +157,7 @@
             android:layout_height="48dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/bg_button_purple"
-            android:text="+  Add Task"
+            android:text="@string/add_task_btn"
             android:textAllCaps="false"
             android:textColor="@color/white" />
     </LinearLayout>

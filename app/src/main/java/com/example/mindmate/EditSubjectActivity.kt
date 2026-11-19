@@ -13,23 +13,29 @@ class EditSubjectActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEditSubjectBinding
     private val db by lazy { AppDatabase.get(this) }
-
     private var current: Subject? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditSubjectBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarsPadding()
 
         val subjectId = intent.getLongExtra("subject_id", -1L)
-        if (subjectId != -1L) {
-            lifecycleScope.launch {
-                db.subjectDao().getById(subjectId)?.let {
-                    current = it
-                    binding.etSubjectName.setText(it.name)
-                    binding.etStudyGoal.setText(it.studyGoal.toString())
-                }
+        if (subjectId == -1L) {
+            finish()
+            return
+        }
+
+        lifecycleScope.launch {
+            val subject = db.subjectDao().getById(subjectId)
+            if (subject == null) {
+                finish()
+                return@launch
             }
+            current = subject
+            binding.etSubjectName.setText(subject.name)
+            binding.etStudyGoal.setText(subject.studyGoal.toString())
         }
 
         binding.btnBack.setOnClickListener { finish() }
@@ -38,6 +44,7 @@ class EditSubjectActivity : AppCompatActivity() {
     }
 
     private fun saveChanges() {
+        val subject = current ?: return
         val name = binding.etSubjectName.text.toString().trim()
         val goal = binding.etStudyGoal.text.toString().toIntOrNull()
 
@@ -51,12 +58,7 @@ class EditSubjectActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            val existing = current
-            if (existing != null) {
-                db.subjectDao().update(existing.copy(name = name, studyGoal = goal))
-            } else {
-                db.subjectDao().insert(Subject(name = name, studyGoal = goal))
-            }
+            db.subjectDao().update(subject.copy(name = name, studyGoal = goal))
             Toast.makeText(this@EditSubjectActivity, "Saved", Toast.LENGTH_SHORT).show()
             finish()
         }

@@ -78,6 +78,16 @@ class UserSessionManager(context: Context) {
 
     fun getUserEmail(): String = prefs.getString(KEY_CURRENT_EMAIL, "") ?: ""
 
+    fun updateName(newName: String) {
+        val email = getUserEmail().trim().lowercase()
+        if (email.isEmpty()) return
+        prefs.edit().apply {
+            putString(nameKey(email), newName)
+            putString(KEY_CURRENT_NAME, newName)
+            apply()
+        }
+    }
+
     fun logout() {
         prefs.edit().apply {
             putBoolean(KEY_IS_LOGGED_IN, false)
