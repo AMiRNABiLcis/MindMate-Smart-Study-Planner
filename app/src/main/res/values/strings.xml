@@ -30,4 +30,17 @@
     <string name="forget_password">Forget password?</string>
     <string name="login_btn">Login</string>
     <string name="dont_have_account">Don\'t have an account?Signup</string>
+
+    <!-- Help & Support Screen -->
+    <string name="help_title">Help &amp; Support</string>
+    <string name="faq_1_q">How do I add a subject?</string>
+    <string name="faq_1_a">Go to the Subjects tab and tap the add subject button to create a new subject.</string>
+    <string name="faq_2_q">How do I track my study progress?</string>
+    <string name="faq_2_a">Open My Progress from the Profile screen to view your study status.</string>
+    <string name="faq_3_q">Can I change my email address?</string>
+    <string name="faq_3_a">Your account email is fixed and cannot be changed from My Information.</string>
+    <string name="faq_4_q">How do I switch between Light and Dark mode?</string>
+    <string name="faq_4_a">Use the Appearance selector on the Profile screen to choose System, Light, or Dark.</string>
+    <string name="contact_support">Contact Support</string>
+    <string name="version_text">Version 1.0</string>
 </resources>

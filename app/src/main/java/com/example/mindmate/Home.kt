@@ -396,6 +396,7 @@ fun SubjectCard(
 }
 
 data class SubjectModel(
+    val id: Int = 0,
     val name: String,
     val percentage: String
 )

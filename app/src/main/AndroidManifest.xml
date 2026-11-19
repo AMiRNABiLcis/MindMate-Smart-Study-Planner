@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Needed on Android 11+ so resolveActivity()/startActivity can see email apps -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -12,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MindMate">
 
-        <!-- 1. Splash Screen as Launcher -->
+        <!-- Splash Screen as Launcher -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -23,27 +31,40 @@
             </intent-filter>
         </activity>
 
-        <!-- 2. Login Activity -->
+        <!-- Login Activity -->
         <activity
             android:name=".LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.MindMate" />
 
-        <!-- 3. Register Activity -->
+        <!-- Register Activity -->
         <activity
             android:name=".RegisterActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.MindMate" />
 
-        <!-- 4. Main Activity -->
+        <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.MindMate"
             android:windowSoftInputMode="adjustResize" />
+
+        <!-- My Information Activity (Profile sub-screen) -->
+        <activity
+            android:name=".MyInformationActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.MindMate" />
+
+        <!-- Help & Support Activity (Profile sub-screen) -->
+        <activity
+            android:name=".HelpSupportActivity"
+            android:exported="false"
+            android:theme="@style/Theme.MindMate" />
 
     </application>
 
