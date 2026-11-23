@@ -25,7 +25,6 @@ interface SubjectDao {
     @Query("SELECT * FROM subjects WHERE id = :id")
     fun observeById(id: Long): Flow<Subject?>
 
-    /** مواد اليوزر الحالي مع تاسكاتها (للـ Home و Subjects و Details) */
     @Transaction
     @Query("SELECT * FROM subjects WHERE userId = :userId ORDER BY createdAt ASC")
     fun observeSubjectsWithTasks(userId: String): Flow<List<SubjectWithTasks>>

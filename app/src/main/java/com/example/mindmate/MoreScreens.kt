@@ -20,10 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindmate.data.SubjectWithTasks
+import com.example.mindmate.data.Task
 
 private val Navy = Color(0xFF261D51)
 private val Blue = Color(0xFF2196F3)
@@ -47,23 +50,104 @@ private fun BackArrow(onClick: () -> Unit) {
     }
 }
 
+data class TaskWithSubject(
+    val task: Task,
+    val subjectName: String
+)
+
 @Composable
 fun TasksHubScreen(
-    subjects: List<SubjectModel>,
-    onSubjectClick: (SubjectModel) -> Unit,
+    subjectsWithTasks: List<SubjectWithTasks>,
+    onToggleTask: (Task, Boolean) -> Unit = { _, _ -> },
+    onUpdateTask: (Task) -> Unit = {},
+    onDeleteTask: (Task) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val allTaskItems = remember(subjectsWithTasks) {
+        subjectsWithTasks.flatMap { swt ->
+            swt.tasks.map { task -> TaskWithSubject(task, swt.subject.name) }
+        }.sortedByDescending { it.task.createdAt }
+    }
+
+    var selectedFilter by remember { mutableStateOf("All") }
+    var editingTask by remember { mutableStateOf<Task?>(null) }
+
+    val filteredTasks = remember(selectedFilter, allTaskItems) {
+        when (selectedFilter) {
+            "Pending" -> allTaskItems.filter { !it.task.isDone }
+            "Completed" -> allTaskItems.filter { it.task.isDone }
+            else -> allTaskItems
+        }
+    }
+
+    if (editingTask != null) {
+        EditTaskDialog(
+            task = editingTask!!,
+            onDismiss = { editingTask = null },
+            onSave = { updatedTask ->
+                onUpdateTask(updatedTask)
+                editingTask = null
+            },
+            onDelete = { taskToDelete ->
+                onDeleteTask(taskToDelete)
+                editingTask = null
+            }
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(PageBg)
             .padding(horizontal = 20.dp, vertical = 16.dp)
     ) {
-        Text("Tasks", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
+        Text("All Tasks", fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
         Spacer(Modifier.height(4.dp))
-        Text("Choose a subject to manage its tasks", fontSize = 14.sp, color = Color(0xFF7A7A7A))
+        val doneCount = allTaskItems.count { it.task.isDone }
+        Text(
+            text = if (allTaskItems.isEmpty()) "No tasks added yet" else "$doneCount of ${allTaskItems.size} tasks completed",
+            fontSize = 14.sp,
+            color = Color(0xFF7A7A7A)
+        )
+        Spacer(Modifier.height(14.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val filters = listOf(
+                "All" to allTaskItems.size,
+                "Pending" to allTaskItems.count { !it.task.isDone },
+                "Completed" to allTaskItems.count { it.task.isDone }
+            )
+            filters.forEach { (label, count) ->
+                val selected = selectedFilter == label
+                Surface(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable { selectedFilter = label },
+                    shape = RoundedCornerShape(10.dp),
+                    color = if (selected) Color(0xFF284B6E) else Color.White,
+                    border = BorderStroke(1.dp, if (selected) Color(0xFF284B6E) else Color(0xFFE0E0E0))
+                ) {
+                    Box(
+                        modifier = Modifier.padding(vertical = 8.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "$label ($count)",
+                            fontSize = 12.sp,
+                            fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
+                            color = if (selected) Color.White else Color(0xFF555555)
+                        )
+                    }
+                }
+            }
+        }
+
         Spacer(Modifier.height(16.dp))
-        if (subjects.isEmpty()) {
+
+        if (filteredTasks.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,16 +156,290 @@ fun TasksHubScreen(
                     .background(Color(0xFFEFEFEF)),
                 contentAlignment = Alignment.Center
             ) {
-                Text("Add a subject first.", fontSize = 14.sp, color = Color(0xFF7A7A7A))
+                Text(
+                    text = if (allTaskItems.isEmpty()) "No tasks yet. Create a subject with tasks!" else "No tasks matching $selectedFilter",
+                    fontSize = 14.sp,
+                    color = Color(0xFF7A7A7A)
+                )
             }
         } else {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                items(subjects, key = { it.id }) { s ->
-                    SubjectListCard(s.name, s.percentage) { onSubjectClick(s) }
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                items(filteredTasks, key = { it.task.id }) { item ->
+                    TaskCardItem(
+                        item = item,
+                        onToggle = { done -> onToggleTask(item.task, done) },
+                        onClick = { editingTask = item.task }
+                    )
                 }
             }
         }
     }
+}
+
+@Composable
+private fun TaskCardItem(
+    item: TaskWithSubject,
+    onToggle: (Boolean) -> Unit,
+    onClick: () -> Unit
+) {
+    val task = item.task
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(14.dp),
+        color = Color.White,
+        border = BorderStroke(1.dp, Color(0xFFE0E0E0)),
+        shadowElevation = 1.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Checkbox(
+                checked = task.isDone,
+                onCheckedChange = onToggle,
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Color(0xFF2196F3),
+                    uncheckedColor = Color(0xFF888888)
+                )
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = task.title,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = if (task.isDone) Color(0xFF888888) else Color(0xFF1A1A1A),
+                    style = TextStyle(
+                        textDecoration = if (task.isDone) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                )
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = Color(0xFFE8EAF6)
+                    ) {
+                        Text(
+                            text = item.subjectName,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = Color(0xFF3F51B5)
+                        )
+                    }
+
+                    val (pBg, pFg) = when (task.priority) {
+                        "High" -> Color(0xFFFFEBEE) to Color(0xFFD32F2F)
+                        "Low" -> Color(0xFFE8F5E9) to Color(0xFF388E3C)
+                        else -> Color(0xFFE3F2FD) to Color(0xFF1976D2)
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = pBg
+                    ) {
+                        Text(
+                            text = task.priority,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = pFg
+                        )
+                    }
+
+                    val (sBg, sFg) = when (task.status) {
+                        "Done" -> Color(0xFFE8F5E9) to Color(0xFF2E7D32)
+                        "In Progress" -> Color(0xFFFFF3E0) to Color(0xFFE65100)
+                        else -> Color(0xFFF5F5F5) to Color(0xFF616161)
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                        color = sBg
+                    ) {
+                        Text(
+                            text = task.status,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = sFg
+                        )
+                    }
+                }
+            }
+
+            IconButton(onClick = onClick, modifier = Modifier.size(32.dp)) {
+                Icon(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit task",
+                    tint = Color(0xFF6BA4E7),
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun EditTaskDialog(
+    task: Task,
+    onDismiss: () -> Unit,
+    onSave: (Task) -> Unit,
+    onDelete: (Task) -> Unit
+) {
+    var title by remember { mutableStateOf(task.title) }
+    var priority by remember { mutableStateOf(task.priority) }
+    var status by remember { mutableStateOf(task.status) }
+    var titleError by remember { mutableStateOf(false) }
+
+    val priorities = listOf("High", "Medium", "Low")
+    val statuses = listOf("Pending", "In Progress", "Done")
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = "Edit Task",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1A1A1A)
+            )
+        },
+        text = {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = {
+                        title = it
+                        if (titleError && it.isNotBlank()) titleError = false
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Task Title") },
+                    isError = titleError,
+                    singleLine = true,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                if (titleError) {
+                    Text(
+                        text = "Title cannot be empty",
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 4.dp, top = 2.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Priority", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    priorities.forEach { p ->
+                        val selected = p == priority
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { priority = p },
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (selected) Color(0xFF2196F3) else Color(0xFFF0F4F8),
+                            border = BorderStroke(1.dp, if (selected) Color(0xFF2196F3) else Color(0xFFCCCCCC))
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = p,
+                                    fontSize = 13.sp,
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (selected) Color.White else Color(0xFF333333)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text("Status", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1A1A1A))
+                Spacer(modifier = Modifier.height(6.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    statuses.forEach { s ->
+                        val selected = s == status
+                        Surface(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable { status = s },
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (selected) Color(0xFF284B6E) else Color(0xFFF0F4F8),
+                            border = BorderStroke(1.dp, if (selected) Color(0xFF284B6E) else Color(0xFFCCCCCC))
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = s,
+                                    fontSize = 12.sp,
+                                    fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (selected) Color.White else Color(0xFF333333)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val trimmed = title.trim()
+                    if (trimmed.isEmpty()) {
+                        titleError = true
+                    } else {
+                        onSave(
+                            task.copy(
+                                title = trimmed,
+                                priority = priority,
+                                status = status,
+                                isDone = status == "Done"
+                            )
+                        )
+                    }
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BA4E7))
+            ) {
+                Text("Save", color = Color.White, fontWeight = FontWeight.Bold)
+            }
+        },
+        dismissButton = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                TextButton(onClick = { onDelete(task) }) {
+                    Text("Delete", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold)
+                }
+                TextButton(onClick = onDismiss) {
+                    Text("Cancel", color = Color(0xFF7A7A7A))
+                }
+            }
+        }
+    )
 }
 
 @Composable

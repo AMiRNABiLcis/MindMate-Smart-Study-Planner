@@ -70,6 +70,21 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         viewModelScope.launch { db.subjectDao().delete(subject) }
     }
 
+    fun updateTask(task: Task) {
+        viewModelScope.launch { db.taskDao().update(task) }
+    }
+
+    fun deleteTask(task: Task) {
+        viewModelScope.launch { db.taskDao().delete(task) }
+    }
+
+    fun toggleTaskDone(task: Task, isDone: Boolean) {
+        viewModelScope.launch {
+            val newStatus = if (isDone) "Done" else if (task.status == "Done") "Pending" else task.status
+            db.taskDao().update(task.copy(isDone = isDone, status = newStatus))
+        }
+    }
+
     fun updateName(newName: String) {
         session.updateName(newName.trim())
         userName = newName.trim()

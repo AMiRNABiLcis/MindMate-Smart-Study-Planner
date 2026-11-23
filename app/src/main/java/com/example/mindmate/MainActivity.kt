@@ -196,8 +196,10 @@ fun AppMainScreen(vm: AppViewModel = viewModel()) {
             }
 
             ScreenDestination.Tasks -> TasksHubScreen(
-                subjects = subjectModels,
-                onSubjectClick = { openTasks(it.id) },
+                subjectsWithTasks = subjectsWithTasks,
+                onToggleTask = { task, done -> vm.toggleTaskDone(task, done) },
+                onUpdateTask = { task -> vm.updateTask(task) },
+                onDeleteTask = { task -> vm.deleteTask(task) },
                 modifier = screenModifier
             )
 

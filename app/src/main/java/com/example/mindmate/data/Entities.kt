@@ -7,7 +7,6 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 
-/** جدول المواد. userId = إيميل صاحب الحساب (عشان كل يوزر يشوف مواده بس) */
 @Entity(tableName = "subjects")
 data class Subject(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
@@ -17,7 +16,6 @@ data class Subject(
     val userId: String = ""
 )
 
-/** جدول التاسكات: كل تاسك تابع لمادة (one-to-many) */
 @Entity(
     tableName = "tasks",
     foreignKeys = [
@@ -46,6 +44,5 @@ data class SubjectWithTasks(
     val tasks: List<Task>
 ) {
     val doneCount: Int get() = tasks.count { it.isDone }
-    /** نسبة الإنجاز الحقيقية للمادة */
     val progressPercent: Int get() = if (tasks.isEmpty()) 0 else doneCount * 100 / tasks.size
 }
