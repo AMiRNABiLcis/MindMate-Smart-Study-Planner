@@ -23,7 +23,6 @@ class FocusActivity : AppCompatActivity() {
         binding = ActivityFocusBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Insets بدل applySystemBarsPadding() عشان الشاشة متعتمدش على حاجة برا الملف
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.updatePadding(bars.left, bars.top, bars.right, bars.bottom)
@@ -81,13 +80,11 @@ class FocusActivity : AppCompatActivity() {
         )
         binding.btnReset.isEnabled = state.hasStarted || state.isRunning
 
-        // مينفعش نبدّل الوضع والتايمر شغال
         for (id in MODE_BUTTON_IDS) binding.toggleMode.findViewById<android.view.View>(id).isEnabled = !state.isRunning
 
         val checkedId = buttonForMode(state.mode)
         if (binding.toggleMode.checkedButtonId != checkedId) binding.toggleMode.check(checkedId)
 
-        // الشاشة تفضل منورة أثناء التركيز
         binding.root.keepScreenOn = state.isRunning
     }
 

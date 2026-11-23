@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mindmate.data.AppDatabase
+import com.example.mindmate.data.FocusRepository
 import com.example.mindmate.data.Subject
 import com.example.mindmate.data.SubjectWithTasks
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,8 +18,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val session = UserSessionManager(app)
     private val db = AppDatabase.get(app)
 
-    /** كل البيانات متفلترة بإيميل اليوزر الحالي */
-    private val userId = session.getUserEmail().trim().lowercase()
+    val userId = session.getUserEmail().trim().lowercase()
 
     var userName: String = session.getUserName()
         private set
@@ -33,11 +33,20 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
             list.map { SubjectModel(it.subject.name, "${it.progressPercent}%", it.subject.id) }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 
-    /** done to total عبر كل المواد (كارت Progress في Home) */
     val progress: StateFlow<Pair<Int, Int>> =
         subjectsWithTasks.map { list ->
             list.sumOf { it.doneCount } to list.sumOf { it.tasks.size }
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0 to 0)
+
+    private val focusRepo = FocusRepository(db.focusSessionDao())
+
+    val focusToday: StateFlow<Int> =
+        focusRepo.observeCompletedSince(userId, startOfDay())
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
+
+    val focusTotalMinutes: StateFlow<Int> =
+        focusRepo.observeTotalMinutes(userId)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
     fun addSubject(name: String) {
         viewModelScope.launch {
@@ -46,7 +55,7 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     fun deleteSubject(subject: Subject) {
-        viewModelScope.launch { db.subjectDao().delete(subject) }  // التاسكات بتتمسح CASCADE
+        viewModelScope.launch { db.subjectDao().delete(subject) }
     }
 
     fun updateName(newName: String) {
@@ -54,5 +63,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         userName = newName.trim()
     }
 
-    fun logout() = session.logout()
+    fun logout() {
+        FocusTimerController.get(getApplication()).stopAndReset()
+        session.logout()
+    }
 }

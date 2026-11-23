@@ -50,6 +50,8 @@ fun AppMainScreen(vm: AppViewModel = viewModel()) {
     val subjectModels by vm.subjectModels.collectAsState()
     val subjectsWithTasks by vm.subjectsWithTasks.collectAsState()
     val progress by vm.progress.collectAsState()
+    val focusToday by vm.focusToday.collectAsState()
+    val focusMinutes by vm.focusTotalMinutes.collectAsState()
     var userName by remember { mutableStateOf(vm.userName) }
 
     fun navigateTo(destination: ScreenDestination) {
@@ -75,6 +77,13 @@ fun AppMainScreen(vm: AppViewModel = viewModel()) {
     fun editSubject(subjectId: Long) {
         context.startActivity(
             Intent(context, EditSubjectActivity::class.java).putExtra("subject_id", subjectId)
+        )
+    }
+
+    fun openFocus() {
+        context.startActivity(
+            Intent(context, FocusActivity::class.java)
+                .putExtra(FocusActivity.EXTRA_USER_ID, vm.userId)
         )
     }
 
@@ -142,6 +151,9 @@ fun AppMainScreen(vm: AppViewModel = viewModel()) {
                 subjectsList = subjectModels,
                 completedTasks = progress.first,
                 totalTasks = progress.second,
+                focusSessionsToday = focusToday,
+                focusTotalMinutes = focusMinutes,
+                onFocusClick = { openFocus() },
                 onAddSubjectClick = { navigateTo(ScreenDestination.AddSubject) },
                 onSeeAllClick = { navigateTo(ScreenDestination.Subjects) },
                 onSubjectClick = openSubject,

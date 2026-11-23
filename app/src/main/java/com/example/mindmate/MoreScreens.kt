@@ -47,7 +47,6 @@ private fun BackArrow(onClick: () -> Unit) {
     }
 }
 
-/** Tasks tab: بيختار المادة وبعدين يفتح TasksActivity */
 @Composable
 fun TasksHubScreen(
     subjects: List<SubjectModel>,
@@ -85,7 +84,6 @@ fun TasksHubScreen(
     }
 }
 
-/** Subject Details (Overview) حسب التصميم */
 @Composable
 fun SubjectDetailsScreen(
     data: SubjectWithTasks?,
@@ -323,7 +321,6 @@ private fun ProfileRow(label: String, color: Color, onClick: () -> Unit) {
     }
 }
 
-/** My Information: الاسم قابل للتعديل والإيميل مقفول (باقي الحقول محتاجة تخزين) */
 @Composable
 fun MyInformationScreen(
     name: String,

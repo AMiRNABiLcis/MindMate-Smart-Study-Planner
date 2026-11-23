@@ -119,7 +119,6 @@ class TasksActivity : AppCompatActivity() {
             .show()
     }
 
-    /** Notes dialog: stores one note per subject in SharedPreferences */
     private fun showNotesDialog() {
         val prefs = getSharedPreferences("subject_notes", MODE_PRIVATE)
         val key = "note_$subjectId"
@@ -146,7 +145,6 @@ class TasksActivity : AppCompatActivity() {
             .show()
     }
 
-    /** Edit title + priority + status */
     private fun showEditDialog(task: Task) {
         val pad = (16 * resources.displayMetrics.density).toInt()
         val input = EditText(this).apply { setText(task.title) }

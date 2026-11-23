@@ -135,6 +135,9 @@ fun HomeContent(
     completedTasks: Int = 0,
     totalTasks: Int = 0,
     userName: String = "",
+    focusSessionsToday: Int = 0,
+    focusTotalMinutes: Int = 0,
+    onFocusClick: () -> Unit = {},
     onAddSubjectClick: () -> Unit = {},
     onSeeAllClick: () -> Unit = {},
     onSubjectClick: (SubjectModel) -> Unit = {},
@@ -242,6 +245,54 @@ fun HomeContent(
                             color = Color(0xFF333333)
                         )
                     }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onFocusClick() },
+            shape = RoundedCornerShape(16.dp),
+            color = Color(0xFF284B6E),
+            shadowElevation = 3.dp
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "Focus Timer",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = if (focusSessionsToday == 0 && focusTotalMinutes == 0) {
+                            "Start a 25-minute Pomodoro session"
+                        } else {
+                            "$focusSessionsToday session(s) today · $focusTotalMinutes min total"
+                        },
+                        fontSize = 12.sp,
+                        color = Color(0xFFE3F2FD)
+                    )
+                }
+                Surface(
+                    shape = RoundedCornerShape(10.dp),
+                    color = Color(0xFF6BA4E7)
+                ) {
+                    Text(
+                        text = "Start",
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
             }
         }
