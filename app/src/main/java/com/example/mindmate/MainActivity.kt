@@ -171,8 +171,8 @@ fun AppMainScreen(vm: AppViewModel = viewModel()) {
             ScreenDestination.AddSubject -> AddSubjectScreen(
                 modifier = screenModifier,
                 onBackClick = { navigateBack() },
-                onSaveSubject = { subjectName ->
-                    vm.addSubject(subjectName)
+                onSaveSubject = { subjectName, tasks ->
+                    vm.addSubject(subjectName, tasks)
                     if (backStack.size > 1) backStack.removeAt(backStack.lastIndex)
                     if (backStack.lastOrNull() != ScreenDestination.Subjects) {
                         backStack.add(ScreenDestination.Subjects)

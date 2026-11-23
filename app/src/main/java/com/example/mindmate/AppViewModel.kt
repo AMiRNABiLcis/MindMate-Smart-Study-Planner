@@ -7,6 +7,7 @@ import com.example.mindmate.data.AppDatabase
 import com.example.mindmate.data.FocusRepository
 import com.example.mindmate.data.Subject
 import com.example.mindmate.data.SubjectWithTasks
+import com.example.mindmate.data.Task
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -48,9 +49,20 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         focusRepo.observeTotalMinutes(userId)
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), 0)
 
-    fun addSubject(name: String) {
+    fun addSubject(name: String, tasks: List<TaskDraft> = emptyList()) {
         viewModelScope.launch {
-            db.subjectDao().insert(Subject(name = name.trim(), studyGoal = 100, userId = userId))
+            val subjectId = db.subjectDao().insert(Subject(name = name.trim(), studyGoal = 100, userId = userId))
+            for (task in tasks) {
+                db.taskDao().insert(
+                    Task(
+                        subjectId = subjectId,
+                        title = task.title.trim(),
+                        priority = task.priority,
+                        status = task.status,
+                        isDone = task.status == "Done"
+                    )
+                )
+            }
         }
     }
 
